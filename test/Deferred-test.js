@@ -7,7 +7,7 @@ function isFn( a ){
 	return typeof a === 'function';
 }
 
-module( 'Deferred creation' );
+module( 'Deferred' );
 
 test( 'Simple class creation', function(){
 	ok( typeof Deferred == 'function', 'Deferred constrictor exists' );
@@ -112,6 +112,36 @@ test( 'Chaining', function(){
 });
 
 
-test( 'Deferred.when tests', function(){
-	ok( true, 'skip' );
+module( 'Deferred.when' );
+
+test( 'Deferred.when sync', function(){
+
+	expect( 2 );
+
+	Deferred.when( 100 ).then( function( value ){
+		equal( value, 100, 'Deferred.when passed right' );
+	});
+
+	Deferred.when( 200, function( value ){
+		equal( value, 200, 'Deferred.when passed right' );
+	});
+});
+
+
+test( 'Deferred.when async', function(){
+	var def = new Deferred();
+
+	stop( 2 );
+
+	Deferred.when( def, function( val ){
+		equal( val, 10 );
+		start();
+	});
+
+	Deferred.when( def ).then( function( val ){
+		equal( val, 10 );
+		start();
+	});
+
+	def.resolve( 10 );
 });

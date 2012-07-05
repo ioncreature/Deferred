@@ -247,10 +247,10 @@
 	})();
 
 
-
 	// module:
 	//		dojo/when
-	var when = (function(Deferred, Promise){
+
+	var when = (function(){
 		return function when(valueOrPromise, /*Function?*/ callback, /*Function?*/ errback, /*Function?*/ progback){
 			var receivedPromise = valueOrPromise && typeof valueOrPromise.then === "function";
 			var nativePromise = receivedPromise && valueOrPromise instanceof Promise;
@@ -276,12 +276,12 @@
 	Deferred.when = when;
 
 
+	// Declare as AMD module if possible
 	if ( typeof define == 'function' && define.amd )
 		define( function(){
 			return Deferred;
 		});
 	else
 		global.Deferred = Deferred;
-
 
 })( this );
