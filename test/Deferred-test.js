@@ -38,8 +38,12 @@ test( 'Resolve test', function(){
 	});
 
 	setTimeout( function(){
+		ok( !d.isFulfilled(), 'not fulfilled' );
+
 		d.resolve( 10 );
+
 		ok( d.isResolved(), 'isResolved' );
+		ok( !d.isRejected(), 'not rejected' );
 		ok( d.isFulfilled(), 'isFulfilled' );
 	}, 1 );
 });
@@ -61,12 +65,49 @@ test( 'Reject test', function(){
 	});
 
 	setTimeout( function(){
+		ok( !d.isFulfilled(), 'd not fulfilled' );
+		ok( !d2.isFulfilled(), 'd2 not fulfilled' );
 		d.reject( new Error() );
 		d2.reject();
 		ok( d.isRejected(),  'd isResolved' );
+		ok(!d.isResolved(),  'd not resolved' );
 		ok( d.isFulfilled(), 'd isFulfilled' );
 		ok( d2.isRejected(),  'd2 isResolved' );
 		ok( d2.isFulfilled(), 'd2 isFulfilled' );
+	}, 1 );
+});
+
+
+test( 'Chaining', function(){
+	var def = new Deferred(),
+		counter = 0;
+
+	stop( 3 );
+
+	def
+		.then( function( arg ){
+			start();
+
+			equal( ++counter, 1, 'First callback' );
+
+			var def = new Deferred();
+			setTimeout( function(){
+				start();
+				equal( ++counter, 2, 'Second callback' );
+
+				def.resolve( arg + 1);
+			}, 1 );
+
+			return def;
+		})
+		.then( function( arg ){
+			start();
+			equal( arg, 11, 'Check for parameter passing in chained deferreds' );
+			equal( ++counter, 3, 'Last, third callback' );
+		});
+
+	setTimeout( function(){
+		def.resolve( 10 );
 	}, 1 );
 });
 
