@@ -5,7 +5,7 @@ Realization of deferred object by Dojo Toolkit, but without dependencies
 
 
 Using:
-
+<pre><code class="javascript">
 var def = new Deferred();
 
 def.then(
@@ -21,3 +21,4 @@ setTimeout( function(){
   cosnole.log( 'Resolving deferred object' );
   def.resolve( 'this is arguments' );
 }, 100 );
+</code></pre>
