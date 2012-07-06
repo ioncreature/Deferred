@@ -3,9 +3,6 @@
  * June 2012
  */
 
-function isFn( a ){
-	return typeof a === 'function';
-}
 
 module( 'Deferred' );
 
@@ -24,6 +21,10 @@ test( 'Simple class creation', function(){
 	ok( isFn(d.isResolved), 'method .isResolved exists' );
 	ok( isFn(d.isFulfilled), 'method .isFulfilled exists' );
 	ok( isFn(d.isCanceled), 'method .isCanceled exists' );
+
+	function isFn( a ){
+		return typeof a === 'function';
+	}
 });
 
 
@@ -108,7 +109,7 @@ test( 'Chaining', function(){
 
 	setTimeout( function(){
 		def.resolve( 10 );
-	}, 1 );
+	}, 10 );
 });
 
 
@@ -143,5 +144,92 @@ test( 'Deferred.when async', function(){
 		start();
 	});
 
-	def.resolve( 10 );
+	setTimeout( function(){
+		def.resolve( 10 );
+	}, 10 );
+});
+
+
+module( 'DeferredList' );
+
+test( 'Combining', function(){
+	var def1 = new Deferred(),
+		def2 = new Deferred(),
+		defList = new DeferredList( [def1, def2] );
+
+	stop();
+
+	defList.then( function( result ){
+		start();
+
+		ok( def1.isResolved(), 'def1 is resolved' );
+		ok( def2.isResolved(), 'def2 is resolved' );
+
+		equal( this.gatherResults(this), [10, 20], 'check for gathered response' );
+	});
+
+	setTimeout( function(){
+		def1.resolve( 10 );
+	}, 5 );
+	setTimeout( function(){
+		def2.resolve( 20 );
+	}, 10 );
+});
+
+
+test( 'Combining and rejecting', function(){
+	var def1 = new Deferred(),
+		def2 = new Deferred(),
+		defList = new DeferredList( [def1, def2] );
+
+	stop();
+
+	defList.then( function(){
+		start();
+
+		ok( def1.isResolved(), 'def1 is resolved' );
+		ok( def2.isRejected(), 'def2 is rejected' );
+	});
+
+	def1.resolve();
+	def2.reject();
+});
+
+
+test( 'Waiting for first callback', function(){
+	var def1 = new Deferred(),
+		def2 = new Deferred(),
+		defList = new DeferredList( [def1, def2], true );
+
+	stop();
+
+	defList.then( function( result ){
+		start();
+		equal( result[1], 10, 'check for return' );
+	});
+
+	def1.resolve( 10 );
+});
+
+
+test( 'Waiting for first errback', function(){
+	var def1 = new Deferred(),
+		def2 = new Deferred(),
+		defList = new DeferredList( [def1, def2], true, true );
+
+	stop();
+	expect( 1 );
+
+	defList.then(
+		function(){
+			ok( false, 'Test must go to reject callback' );
+			start();
+		},
+		function(){
+			ok( defList.isRejected(), 'Test goes to reject callback' );
+			start();
+		}
+	);
+
+	def1.reject();
 });
