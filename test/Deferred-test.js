@@ -7,7 +7,7 @@
 module( 'Deferred' );
 
 test( 'Object creation', function(){
-	ok( typeof Deferred == 'function', 'Deferred constrictor exists' );
+	ok( typeof Deferred == 'function', 'Deferred constructor exists' );
 
 	var d = new Deferred();
 
