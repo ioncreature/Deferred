@@ -6,7 +6,7 @@
 
 module( 'Deferred' );
 
-test( 'Simple class creation', function(){
+test( 'Object creation', function(){
 	ok( typeof Deferred == 'function', 'Deferred constrictor exists' );
 
 	var d = new Deferred();
@@ -79,7 +79,7 @@ test( 'Reject test', function(){
 });
 
 
-test( 'Chaining', function(){
+test( 'Chaining with promises', function(){
 	var def = new Deferred(),
 		counter = 0;
 
@@ -106,6 +106,52 @@ test( 'Chaining', function(){
 			equal( arg, 11, 'Check for parameter passing in chained deferreds' );
 			equal( ++counter, 3, 'Last, third callback' );
 		});
+
+	setTimeout( function(){
+		def.resolve( 10 );
+	}, 10 );
+});
+
+
+test( 'Chaining with promises(reject)', function(){
+	var def = new Deferred();
+
+	def
+		.then( function( res ){
+			ok( false, 'This is impossible 8)' );
+		})
+		.then( null, function( error ){
+			ok( error, 'error goes to second promise' );
+			equal( error, 'error', 'Check error type' );
+			return error;
+		})
+		.then( null, function( error ){
+			equal( error, 'error', 'Check error type' );
+		});
+
+	def.reject( 'error' );
+});
+
+
+test( 'Multiple callback', function(){
+	var def = new Deferred(),
+		order = 0;
+
+	stop();
+
+	def.then( function( res ){
+		equal( 1, ++order, 'First callback' );
+		equal( 10, res, 'waiting for 10 to first callback' );
+	});
+
+	def.then( function( res ){
+		equal( 2, ++order, 'Second callback' );
+	});
+
+	def.then( function( res ){
+		equal( 3, ++order, 'Third callback' );
+		start();
+	});
 
 	setTimeout( function(){
 		def.resolve( 10 );
