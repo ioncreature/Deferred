@@ -1,5 +1,6 @@
 /**
  * @author Marenin Alex
+ * Source here: https://github.com/ioncreature/Deferred/blob/master/DeferredList.js
  * July 2012
  *
  * This code is modified part of Dojo Toolkit (http://dojotoolkit.org/)
@@ -7,6 +8,7 @@
  */
 
 (function( global ){
+	"use strict";
 
 	function createDeferredListClass( Deferred ){
 

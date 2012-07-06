@@ -1,5 +1,6 @@
 /**
  * @author Marenin Alex
+ * See here: https://github.com/ioncreature/Deferred/blob/master/Deferred.js
  * July 2012
  *
  * This code is modified part of Dojo Toolkit (http://dojotoolkit.org/)
