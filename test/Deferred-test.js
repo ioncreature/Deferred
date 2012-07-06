@@ -215,7 +215,7 @@ test( 'Waiting for first callback', function(){
 test( 'Waiting for first errback', function(){
 	var def1 = new Deferred(),
 		def2 = new Deferred(),
-		defList = new DeferredList( [def1, def2], true, true );
+		defList = new DeferredList( [def1, def2], false, true );
 
 	stop();
 	expect( 1 );
